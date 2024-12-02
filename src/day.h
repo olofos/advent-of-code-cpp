@@ -7,6 +7,7 @@ public:
     virtual std::string part1(std::istream& input) = 0;
     virtual std::string part2(std::istream& input) = 0;
     virtual int day() = 0;
+    virtual ~Day() {};
 
     virtual std::optional<std::string> part1_test_result() { return std::nullopt; };
     virtual std::optional<std::string> part2_test_result() { return std::nullopt; };

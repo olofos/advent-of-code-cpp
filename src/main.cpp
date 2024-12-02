@@ -92,11 +92,11 @@ int main(int argc, char** argv)
     std::vector<Day*> days = { new Day1, new Day2 };
 
     if (argc > 1 && std::string(argv[1]) == "t") {
-        for (auto day : days) {
+        for (auto& day : days) {
             std::cout << day->test();
         }
     } else {
-        for (auto day : days) {
+        for (auto& day : days) {
             std::cout << day->run();
         }
     }
