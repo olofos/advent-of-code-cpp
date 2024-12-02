@@ -12,8 +12,8 @@ public:
     virtual std::optional<std::string> part2_test_result() { return std::nullopt; };
     virtual std::optional<std::string> test_input() { return std::nullopt; };
 
-    void test();
-    void run();
+    std::string test();
+    std::string run();
 };
 
 class Day1 : public Day {
