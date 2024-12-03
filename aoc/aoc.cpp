@@ -97,7 +97,7 @@ std::string Day::run()
     return output.str();
 }
 
-bool run_all(std::vector<std::shared_ptr<Day>>& days)
+bool run_all(const std::vector<std::unique_ptr<Day>>& days)
 {
     int failures = 0;
     std::string messages;

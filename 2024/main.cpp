@@ -1,3 +1,4 @@
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -6,7 +7,9 @@
 
 int main()
 {
-    std::vector<std::shared_ptr<Day>> days = { std::make_shared<Day1>(), std::make_shared<Day2>(), std::make_shared<Day3>() };
+    std::unique_ptr<Day> init[] { std::make_unique<Day1>(), std::make_unique<Day2>(), std::make_unique<Day3>() };
+
+    std::vector<std::unique_ptr<Day>> days { std::make_move_iterator(std::begin(init)), std::make_move_iterator(std::end(init)) };
 
     if (run_all(days)) {
         return 0;
