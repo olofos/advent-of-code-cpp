@@ -1,8 +1,5 @@
 #include <algorithm>
 #include <cstdlib>
-#include <exception>
-#include <fstream>
-#include <iostream>
 #include <iterator>
 #include <sstream>
 #include <string>

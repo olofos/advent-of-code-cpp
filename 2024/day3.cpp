@@ -1,12 +1,6 @@
-#include <algorithm>
-#include <cstdlib>
 #include <fstream>
-#include <iostream>
-#include <iterator>
 #include <regex>
-#include <sstream>
 #include <string>
-#include <vector>
 
 #include "days.h"
 

@@ -1,11 +1,7 @@
-#include <fstream>
-#include <iomanip>
-#include <iostream>
 #include <memory>
-#include <sstream>
-#include <string>
 #include <vector>
 
+#include "day.h"
 #include "days.h"
 
 int main()
