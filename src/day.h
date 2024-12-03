@@ -4,6 +4,15 @@
 
 class Day {
 public:
+    struct TestResult {
+        std::string message;
+        bool success;
+    };
+
+    TestResult test();
+    std::string run();
+
+public:
     virtual std::string part1(std::istream& input) = 0;
     virtual std::string part2(std::istream& input) = 0;
     virtual int day() = 0;
@@ -12,9 +21,6 @@ public:
     virtual std::optional<std::string> part1_test_result() { return std::nullopt; };
     virtual std::optional<std::string> part2_test_result() { return std::nullopt; };
     virtual std::optional<std::string> test_input() { return std::nullopt; };
-
-    std::string test();
-    std::string run();
 };
 
 class Day1 : public Day {

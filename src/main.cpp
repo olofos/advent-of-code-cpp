@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -7,14 +8,16 @@
 
 #include "day.h"
 
-std::string Day::test()
+Day::TestResult Day::test()
 {
     std::ostringstream output;
 
     if (!test_input().has_value()) {
         output << "No test input for day " << day() << "\n";
-        return output.str();
+        return { output.str(), true };
     }
+
+    bool success = true;
 
     output << "Running tests for day " << day() << "\n";
     if (part1_test_result().has_value()) {
@@ -25,9 +28,11 @@ std::string Day::test()
                 output << "Part 1 passed\n";
             } else {
                 output << "Part 1 failed: Expected " << part1_test_result().value() << ", got " << result << "\n";
+                success = false;
             }
         } catch (const std::exception& e) {
             output << "Part 1 failed: " << e.what() << "\n";
+            success = false;
         }
     } else {
         output << "No test result for part 1\n";
@@ -41,15 +46,17 @@ std::string Day::test()
                 output << "Part 2 passed\n";
             } else {
                 output << "Part 2 failed: Expected " << part2_test_result().value() << ", got " << result << "\n";
+                success = false;
             }
         } catch (const std::exception& e) {
             output << "Part 2 failed: " << e.what() << "\n";
+            success = false;
         }
     } else {
         output << "No test result for part 2\n";
     }
 
-    return output.str();
+    return { output.str(), success };
 }
 
 std::string Day::run()
@@ -67,7 +74,7 @@ std::string Day::run()
 
     try {
         auto result = part1(input);
-        output << result;
+        output << std::setw(12) << result;
     } catch (const std::exception& e) {
         output << "Error: " << e.what();
     }
@@ -79,7 +86,7 @@ std::string Day::run()
 
     try {
         auto result = part2(input);
-        output << result;
+        output << std::setw(12) << result;
     } catch (const std::exception& e) {
         output << "Error: " << e.what();
     }
@@ -88,18 +95,28 @@ std::string Day::run()
     return output.str();
 }
 
-int main(int argc, char** argv)
+int main()
 {
     std::vector<std::shared_ptr<Day>> days = { std::make_shared<Day1>(), std::make_shared<Day2>(), std::make_shared<Day3>() };
 
-    if (argc > 1 && argv[1][0] == 't') {
-        for (auto& day : days) {
-            std::cout << day->test();
+    int failures = 0;
+    std::string messages;
+    for (auto& day : days) {
+        Day::TestResult result = day->test();
+        messages += result.message;
+        if (!result.success) {
+            failures++;
         }
-    } else {
-        for (auto& day : days) {
-            std::cout << day->run();
-        }
+    }
+    if (failures > 0) {
+        std::cout << messages << "\n";
+        std::cout << failures << " tests failed\n";
+        return EXIT_FAILURE;
+    }
+
+    std::cout << "All tests passed\n\n";
+    for (auto& day : days) {
+        std::cout << day->run();
     }
 
     return 0;
