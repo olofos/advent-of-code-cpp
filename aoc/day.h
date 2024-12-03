@@ -1,3 +1,7 @@
+#pragma once
+#ifndef AOC_DAY_H
+#define AOC_DAY_H
+
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -26,3 +30,5 @@ public:
 };
 
 bool run_all(std::vector<std::shared_ptr<Day>>& days);
+
+#endif
