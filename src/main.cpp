@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -89,9 +90,9 @@ std::string Day::run()
 
 int main(int argc, char** argv)
 {
-    std::vector<Day*> days = { new Day1, new Day2 };
+    std::vector<std::shared_ptr<Day>> days = { std::make_shared<Day1>(), std::make_shared<Day2>() };
 
-    if (argc > 1 && std::string(argv[1]) == "t") {
+    if (argc > 1 && argv[1][0] == 't') {
         for (auto& day : days) {
             std::cout << day->test();
         }

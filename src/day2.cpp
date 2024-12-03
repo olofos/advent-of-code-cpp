@@ -3,12 +3,14 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include "day.h"
 
+namespace {
 std::vector<std::vector<int>> parse(std::istream& input)
 {
     std::string line;
@@ -19,6 +21,7 @@ std::vector<std::vector<int>> parse(std::istream& input)
             std::vector<int>(std::istream_iterator<int>(is), std::istream_iterator<int>()));
     }
     return numbers;
+}
 }
 
 bool is_safe(const std::vector<int>& row, size_t size)

@@ -7,6 +7,7 @@
 
 #include "day.h"
 
+namespace {
 std::pair<std::vector<int>, std::vector<int>> parse(std::istream& input)
 {
     int a, b;
@@ -21,6 +22,7 @@ std::pair<std::vector<int>, std::vector<int>> parse(std::istream& input)
     std::sort(values2.begin(), values2.end());
 
     return { values1, values2 };
+}
 }
 
 std::string Day1::part1(std::istream& input)
