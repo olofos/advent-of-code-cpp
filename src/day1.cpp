@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstdlib>
 #include <exception>
 #include <fstream>
 #include <iostream>
@@ -31,12 +32,7 @@ std::string Day1::part1(std::istream& input)
 
     int sum = 0;
     for (unsigned i = 0; i < values1.size(); i++) {
-        int d = values1[i] - values2[i];
-        if (d > 0) {
-            sum += d;
-        } else {
-            sum -= d;
-        }
+        sum += std::abs(values1[i] - values2[i]);
     }
 
     return std::to_string(sum);
