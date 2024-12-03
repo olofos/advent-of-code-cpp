@@ -90,7 +90,7 @@ std::string Day::run()
 
 int main(int argc, char** argv)
 {
-    std::vector<std::shared_ptr<Day>> days = { std::make_shared<Day1>(), std::make_shared<Day2>() };
+    std::vector<std::shared_ptr<Day>> days = { std::make_shared<Day1>(), std::make_shared<Day2>(), std::make_shared<Day3>() };
 
     if (argc > 1 && argv[1][0] == 't') {
         for (auto& day : days) {
