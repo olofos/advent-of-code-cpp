@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include "day.h"
+#include "days.h"
 
 std::string Day3::part1(std::istream& input)
 {

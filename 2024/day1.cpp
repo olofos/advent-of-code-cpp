@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "day.h"
+#include "days.h"
 
 namespace {
 std::pair<std::vector<int>, std::vector<int>> parse(std::istream& input)

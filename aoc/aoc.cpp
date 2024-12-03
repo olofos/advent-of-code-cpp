@@ -64,7 +64,7 @@ std::string Day::run()
     std::ostringstream output;
 
     output << "Day " << day() << ": ";
-    std::string filename = "data/day" + std::to_string(day()) + ".dat";
+    std::string filename = "data/" + std::to_string(year()) + "/day" + std::to_string(day()) + ".dat";
     std::ifstream input(filename, std::ios::in);
 
     if (!input.is_open()) {
@@ -95,10 +95,8 @@ std::string Day::run()
     return output.str();
 }
 
-int main()
+bool run_all(std::vector<std::shared_ptr<Day>>& days)
 {
-    std::vector<std::shared_ptr<Day>> days = { std::make_shared<Day1>(), std::make_shared<Day2>(), std::make_shared<Day3>() };
-
     int failures = 0;
     std::string messages;
     for (auto& day : days) {
@@ -111,7 +109,7 @@ int main()
     if (failures > 0) {
         std::cout << messages << "\n";
         std::cout << failures << " tests failed\n";
-        return EXIT_FAILURE;
+        return false;
     }
 
     std::cout << "All tests passed\n\n";
@@ -119,5 +117,5 @@ int main()
         std::cout << day->run();
     }
 
-    return 0;
+    return true;
 }

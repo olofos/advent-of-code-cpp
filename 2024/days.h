@@ -2,32 +2,14 @@
 #include <optional>
 #include <string>
 
-class Day {
-public:
-    struct TestResult {
-        std::string message;
-        bool success;
-    };
-
-    TestResult test();
-    std::string run();
-
-public:
-    virtual std::string part1(std::istream& input) = 0;
-    virtual std::string part2(std::istream& input) = 0;
-    virtual int day() = 0;
-    virtual ~Day() {};
-
-    virtual std::optional<std::string> part1_test_result() { return std::nullopt; };
-    virtual std::optional<std::string> part2_test_result() { return std::nullopt; };
-    virtual std::optional<std::string> test_input() { return std::nullopt; };
-};
+#include "day.h"
 
 class Day1 : public Day {
 public:
     std::string part1(std::istream& input) override;
     std::string part2(std::istream& input) override;
     int day() override { return 1; }
+    int year() override { return 2024; }
 
     std::optional<std::string> part1_test_result() override { return "11"; };
     std::optional<std::string> part2_test_result() override { return "31"; };
@@ -42,6 +24,7 @@ public:
     std::string part1(std::istream& input) override;
     std::string part2(std::istream& input) override;
     int day() override { return 2; }
+    int year() override { return 2024; }
 
     std::optional<std::string> part1_test_result() override { return "2"; };
     std::optional<std::string> part2_test_result() override { return "4"; };
@@ -56,6 +39,7 @@ public:
     std::string part1(std::istream& input) override;
     std::string part2(std::istream& input) override;
     int day() override { return 3; }
+    int year() override { return 2024; }
 
     std::optional<std::string> part1_test_result() override { return "161"; };
     std::optional<std::string> part2_test_result() override { return "48"; };

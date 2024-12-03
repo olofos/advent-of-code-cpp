@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include "day.h"
+#include "days.h"
 
 namespace {
 std::vector<std::vector<int>> parse(std::istream& input)
