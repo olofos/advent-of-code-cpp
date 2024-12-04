@@ -53,4 +53,19 @@ public:
     }
 };
 
+class Day4 : public Day {
+public:
+    std::string part1(std::istream& input) override;
+    std::string part2(std::istream& input) override;
+    int day() override { return 4; }
+    int year() override { return 2024; }
+
+    std::optional<std::string> part1_test_result() override { return "18"; };
+    std::optional<std::string> part2_test_result() override { return "9"; };
+    std::optional<std::string> test_input() override
+    {
+        return "MMMSXXMASM\nMSAMXMSMSA\nAMXSXMAAMM\nMSAMASMSMX\nXMASAMXAMM\nXXAMMXXAMA\nSMSMSASXSS\nSAXAMASAAA\nMAMMMXMMMM\nMXMXAXMASX\n";
+    }
+};
+
 #endif

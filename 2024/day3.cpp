@@ -9,7 +9,7 @@ std::string Day3::part1(std::istream& input)
     std::string line;
     std::regex re(R"(mul\((\d+),(\d+)\))");
     int sum = 0;
-    while (getline(input, line)) {
+    while (std::getline(input, line)) {
         std::smatch match;
 
         auto it = std::sregex_iterator(line.begin(), line.end(), re);
