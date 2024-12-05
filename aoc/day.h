@@ -35,6 +35,13 @@ public:
     Day& operator=(Day&&) = default;
 };
 
-bool run_all(const std::vector<std::unique_ptr<Day>>& days);
+int run_all(const std::vector<std::unique_ptr<Day>>& days);
+
+template <typename... Ds>
+int run_all()
+{
+    std::unique_ptr<Day> init[] { std::make_unique<Ds>()... };
+    return run_all(std::vector<std::unique_ptr<Day>> { std::make_move_iterator(std::begin(init)), std::make_move_iterator(std::end(init)) });
+}
 
 #endif

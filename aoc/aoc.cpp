@@ -98,8 +98,11 @@ std::string Day::run()
     return output.str();
 }
 
-bool run_all(const std::vector<std::unique_ptr<Day>>& days)
+int run_all(const std::vector<std::unique_ptr<Day>>& days)
 {
+    const int SUCCESS = 0;
+    const int FAILURE = 1;
+
     int failures = 0;
     std::string messages;
 
@@ -109,11 +112,11 @@ bool run_all(const std::vector<std::unique_ptr<Day>>& days)
     for (auto& day : days) {
         if (day->year() != year) {
             std::cout << "Days must be in same year\n";
-            return false;
+            return FAILURE;
         }
         if (day_set.find(day->day()) != day_set.end()) {
             std::cout << "Day " << day->day() << " is not unique\n";
-            return false;
+            return FAILURE;
         }
         day_set.insert(day->day());
     }
@@ -128,7 +131,7 @@ bool run_all(const std::vector<std::unique_ptr<Day>>& days)
     if (failures > 0) {
         std::cout << messages << "\n";
         std::cout << failures << " tests failed\n";
-        return false;
+        return FAILURE;
     }
 
     std::cout << "All tests passed\n\n";
@@ -136,5 +139,5 @@ bool run_all(const std::vector<std::unique_ptr<Day>>& days)
         std::cout << day->run();
     }
 
-    return true;
+    return SUCCESS;
 }
