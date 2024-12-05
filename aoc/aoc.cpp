@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <optional>
+#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -101,6 +102,22 @@ bool run_all(const std::vector<std::unique_ptr<Day>>& days)
 {
     int failures = 0;
     std::string messages;
+
+    int year = days[0]->year();
+    std::set<int> day_set;
+
+    for (auto& day : days) {
+        if (day->year() != year) {
+            std::cout << "Days must be in same year\n";
+            return false;
+        }
+        if (day_set.find(day->day()) != day_set.end()) {
+            std::cout << "Day " << day->day() << " is not unique\n";
+            return false;
+        }
+        day_set.insert(day->day());
+    }
+
     for (auto& day : days) {
         Day::TestResult result = day->test();
         messages += result.message;
