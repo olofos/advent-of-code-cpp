@@ -84,4 +84,18 @@ public:
     }
 };
 
+class Day6 : public Day {
+public:
+    std::string part1(std::istream& input) override;
+    std::string part2(std::istream& input) override;
+    int day() override { return 6; }
+    int year() override { return 2024; }
+
+    std::optional<std::string> part1_test_result() override { return "41"; };
+
+    std::optional<std::string> test_input() override
+    {
+        return "....#.....\n.........#\n..........\n..#.......\n.......#..\n..........\n.#..^.....\n........#.\n#.........\n......#...\n";
+    }
+};
 #endif
