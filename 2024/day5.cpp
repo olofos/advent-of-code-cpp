@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <istream>
 #include <set>
@@ -60,6 +61,24 @@ bool check_ordering(const std::set<std::pair<int, int>>& ordering, const std::ve
     }
     return true;
 }
+
+void sort(const std::set<std::pair<int, int>>& ordering, std::vector<int>& pages)
+{
+    bool did_swap;
+    do {
+        did_swap = false;
+        for (auto it = pages.begin(); it != pages.end() - 1; ++it) {
+
+            auto a = it[0];
+            auto b = it[1];
+            if (ordering.find({ b, a }) != ordering.end()) {
+
+                std::iter_swap(it, it + 1);
+                did_swap = true;
+            }
+        }
+    } while (did_swap);
+}
 }
 
 std::string Day5::part1(std::istream& input)
@@ -75,7 +94,16 @@ std::string Day5::part1(std::istream& input)
     return std::to_string(sum);
 }
 
-std::string Day5::part2(std::istream&)
+std::string Day5::part2(std::istream& input)
 {
-    throw std::runtime_error("not implemented");
+    auto [ordering, pages_list] = parse(input);
+    int sum = 0;
+    for (auto& pages : pages_list) {
+        if (!check_ordering(ordering, pages)) {
+            sort(ordering, pages);
+            sum += pages[pages.size() / 2];
+        }
+    }
+
+    return std::to_string(sum);
 }
