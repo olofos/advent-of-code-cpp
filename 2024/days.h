@@ -92,6 +92,7 @@ public:
     int year() override { return 2024; }
 
     std::optional<std::string> part1_test_result() override { return "41"; };
+    std::optional<std::string> part2_test_result() override { return "6"; };
 
     std::optional<std::string> test_input() override
     {

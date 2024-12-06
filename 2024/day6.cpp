@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 #include <istream>
+#include <map>
 #include <set>
 #include <sstream>
 #include <string>
@@ -15,6 +16,19 @@ struct Dir {
     int y;
 
     Dir turn_right() { return { -y, x }; }
+
+    uint8_t index()
+    {
+        if (x == 1 && y == 0) {
+            return 1;
+        } else if (x == 0 && y == 1) {
+            return 2;
+        } else if (x == -1 && y == 0) {
+            return 4;
+        } else {
+            return 8;
+        }
+    }
 };
 
 struct Point {
@@ -34,21 +48,61 @@ struct Map {
     int width;
     int height;
 
-    bool is_inside()
+    bool is_inside(const Point& point)
     {
-        return guard.x >= 0 && guard.x < width && guard.y >= 0 && guard.y < height;
+        return point.x >= 0 && point.x < width && point.y >= 0 && point.y < height;
     }
+
+    bool is_obstacle(const Point& point) { return obstacles.find(point) != obstacles.end(); }
 
     bool step()
     {
-        while (obstacles.find(guard + dir) != obstacles.end()) {
+        if (is_obstacle(guard + dir)) {
             dir = dir.turn_right();
+        } else {
+            guard += dir;
         }
-        guard += dir;
 
-        return is_inside();
+        return is_inside(guard);
+    }
+
+    std::vector<Point> shoot_ray(const Dir& dir_)
+    {
+        Point point = guard;
+        std::vector<Point> points = { point };
+        while (is_inside(point) && !is_obstacle(point)) {
+            points.push_back(point);
+            point += dir_;
+        }
+        return points;
     }
 };
+
+bool has_loop(Map& map, std::map<Point, uint8_t> visited, Point obstacle)
+{
+    if (!map.is_inside(obstacle) || visited[obstacle] != 0 || map.is_obstacle(obstacle)) {
+        return false;
+    }
+    Point old_guard = map.guard;
+    Dir old_dir = map.dir;
+    map.obstacles.insert(obstacle);
+
+    bool found_loop = false;
+
+    while (map.step()) {
+        if (visited[map.guard] & map.dir.index()) {
+            found_loop = true;
+            break;
+        }
+        visited[map.guard] |= map.dir.index();
+    }
+
+    map.obstacles.erase(obstacle);
+    map.dir = old_dir;
+    map.guard = old_guard;
+
+    return found_loop;
+}
 
 Map parse(std::istream& input)
 {
@@ -72,7 +126,8 @@ Map parse(std::istream& input)
 
 }
 
-std::string Day6::part1(std::istream& input)
+std::string
+Day6::part1(std::istream& input)
 {
     Map map = parse(input);
     std::set<Point> visited = { map.guard };
@@ -87,6 +142,17 @@ std::string Day6::part1(std::istream& input)
 std::string Day6::part2(std::istream& input)
 {
     Map map = parse(input);
+    std::map<Point, uint8_t> visited = { { map.guard, map.dir.index() } };
+    std::set<Point> loop_obstacles;
 
-    throw std::runtime_error("not implemented");
+    while (map.step()) {
+        visited[map.guard] |= map.dir.index();
+
+        auto next = map.guard + map.dir;
+        if (loop_obstacles.find(next) == loop_obstacles.end() && has_loop(map, visited, next)) {
+            loop_obstacles.insert(next);
+        }
+    }
+
+    return std::to_string(loop_obstacles.size());
 }
