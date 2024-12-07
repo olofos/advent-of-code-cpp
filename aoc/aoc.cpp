@@ -1,3 +1,4 @@
+#include <chrono>
 #include <exception>
 #include <fstream>
 #include <iomanip>
@@ -76,8 +77,11 @@ std::string Day::run()
     }
 
     try {
+        auto start = std::chrono::high_resolution_clock::now();
         auto result = part1(input);
-        output << std::setw(15) << result;
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration<double, std::milli>(end - start);
+        output << std::format("{:>15} {:7.2f}ms ", result, duration.count());
     } catch (const std::exception& e) {
         output << "Error: " << e.what();
     }
@@ -88,8 +92,11 @@ std::string Day::run()
     input.seekg(0, std::ios::beg);
 
     try {
+        auto start = std::chrono::high_resolution_clock::now();
         auto result = part2(input);
-        output << std::setw(15) << result;
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration<double, std::milli>(end - start);
+        output << std::format("{:>15} {:7.2f}ms ", result, duration.count());
     } catch (const std::exception& e) {
         output << "Error: " << e.what();
     }
