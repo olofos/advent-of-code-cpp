@@ -99,4 +99,21 @@ public:
         return "....#.....\n.........#\n..........\n..#.......\n.......#..\n..........\n.#..^.....\n........#.\n#.........\n......#...\n";
     }
 };
+
+class Day7 : public Day {
+public:
+    std::string part1(std::istream& input) override;
+    std::string part2(std::istream& input) override;
+    int day() override { return 7; }
+    int year() override { return 2024; }
+
+    std::optional<std::string> part1_test_result() override { return "3749"; };
+    // std::optional<std::string> part2_test_result() override { return "6"; };
+
+    std::optional<std::string> test_input() override
+    {
+        return "190: 10 19\n3267: 81 40 27\n83: 17 5\n156: 15 6\n7290: 6 8 6 15\n161011: 16 10 13\n192: 17 8 14\n21037: 9 7 18 13\n292: 11 6 16 20\n";
+    }
+};
+
 #endif

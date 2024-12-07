@@ -6,5 +6,5 @@
 
 int main()
 {
-    return run_all<Day1, Day2, Day3, Day4, Day5, Day6>();
+    return run_all<Day1, Day2, Day3, Day4, Day5, Day6, Day7>();
 }
