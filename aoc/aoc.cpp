@@ -77,7 +77,7 @@ std::string Day::run()
 
     try {
         auto result = part1(input);
-        output << std::setw(12) << result;
+        output << std::setw(15) << result;
     } catch (const std::exception& e) {
         output << "Error: " << e.what();
     }
@@ -89,7 +89,7 @@ std::string Day::run()
 
     try {
         auto result = part2(input);
-        output << std::setw(12) << result;
+        output << std::setw(15) << result;
     } catch (const std::exception& e) {
         output << "Error: " << e.what();
     }
