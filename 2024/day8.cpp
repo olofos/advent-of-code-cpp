@@ -28,9 +28,7 @@ public:
     Point operator+=(const Point& other) { return { x += other.x, y += other.y }; }
 };
 
-Point operator+(const Point& lhs, const Point& rhs) { return { lhs.x + rhs.x, lhs.y + rhs.y }; }
 Point operator-(const Point& lhs, const Point& rhs) { return { lhs.x - rhs.x, lhs.y - rhs.y }; }
-Point operator*(const Point& lhs, int rhs) { return { lhs.x * rhs, lhs.y * rhs }; }
 Point operator*(int lhs, const Point& rhs) { return { lhs * rhs.x, lhs * rhs.y }; }
 
 std::tuple<std::map<char, std::vector<Point>>, std::size_t, std::size_t> parse(std::istream& input)
@@ -43,10 +41,10 @@ std::tuple<std::map<char, std::vector<Point>>, std::size_t, std::size_t> parse(s
 
     std::map<char, std::vector<Point>> map;
 
-    for (int y = 0; y < lines.size(); y++) {
-        for (int x = 0; x < lines[y].size(); x++) {
+    for (unsigned y = 0; y < lines.size(); y++) {
+        for (unsigned x = 0; x < lines[y].size(); x++) {
             if (lines[y][x] != '.') {
-                map[lines[y][x]].push_back({ x, y });
+                map[lines[y][x]].push_back({ static_cast<int>(x), static_cast<int>(y) });
             }
         }
     }
@@ -56,7 +54,7 @@ std::tuple<std::map<char, std::vector<Point>>, std::size_t, std::size_t> parse(s
 
 bool is_inside(const Point& point, std::size_t width, std::size_t height)
 {
-    return point.x >= 0 && point.x < width && point.y >= 0 && point.y < height;
+    return point.x >= 0 && point.x < static_cast<int>(width) && point.y >= 0 && point.y < static_cast<int>(height);
 }
 }
 
