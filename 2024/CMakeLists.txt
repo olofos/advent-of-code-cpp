@@ -1,5 +1,5 @@
 file(GLOB CPP_FILES "day*.cpp")
-file(GLOB CPP_TEST_FILES "test_*.cpp")
+file(GLOB CPP_TEST_FILES "test*.cpp")
 file(GLOB H_FILES "*.h")
 
 target_sources(aoc-2024 PRIVATE ${CPP_FILES} main.cpp ${H_FILES} )

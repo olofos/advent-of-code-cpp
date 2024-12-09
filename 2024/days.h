@@ -20,4 +20,6 @@ class Day8 : public Day { public: DayDescription description() override; };
 class Day9 : public Day { public: DayDescription description() override; };
 // clang-format on
 
+#define DAYS Day1, Day2, Day3, Day4, Day5, Day6, Day7, Day8, Day9
+
 #endif
