@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <fstream>
+#include <numeric>
 #include <string>
 #include <utility>
 #include <vector>
@@ -18,8 +19,8 @@ std::pair<std::vector<int>, std::vector<int>> parse(std::istream& input)
         values1.push_back(a);
         values2.push_back(b);
     }
-    std::sort(values1.begin(), values1.end());
-    std::sort(values2.begin(), values2.end());
+    std::ranges::sort(values1);
+    std::ranges::sort(values2);
 
     return { values1, values2 };
 }
@@ -28,10 +29,7 @@ std::string part1(std::istream& input)
 {
     auto [values1, values2] = parse(input);
 
-    int sum = 0;
-    for (unsigned i = 0; i < values1.size(); i++) {
-        sum += std::abs(values1[i] - values2[i]);
-    }
+    auto sum = std::transform_reduce(values1.begin(), values1.end(), values2.begin(), 0, std::plus<int>(), [](int a, int b) { return std::abs(a - b); });
 
     return std::to_string(sum);
 }
@@ -40,16 +38,9 @@ std::string part2(std::istream& input)
 {
     auto [values1, values2] = parse(input);
 
-    int sum = 0;
-    for (auto value1 : values1) {
-        int count = 0;
-        for (auto value2 : values2) {
-            if (value2 == value1) {
-                count++;
-            }
-        }
-        sum += count * value1;
-    }
+    auto sum = std::transform_reduce(values1.begin(), values1.end(), 0, std::plus<int>(), [&](int a) {
+        return a * static_cast<int>(std::count_if(values2.begin(), values2.end(), [a](int b) { return b == a; }));
+    });
 
     return std::to_string(sum);
 }
