@@ -4,7 +4,8 @@
 
 #include "days.h"
 
-std::string Day3::part1(std::istream& input)
+namespace day3 {
+std::string part1(std::istream& input)
 {
     std::string line;
     std::regex re(R"(mul\((\d+),(\d+)\))");
@@ -24,7 +25,7 @@ std::string Day3::part1(std::istream& input)
     return std::to_string(sum);
 }
 
-std::string Day3::part2(std::istream& input)
+std::string part2(std::istream& input)
 {
     std::string line;
     std::regex re(R"(mul\((\d+),(\d+)\)|do\(\)|don't\(\))");
@@ -49,4 +50,16 @@ std::string Day3::part2(std::istream& input)
         }
     }
     return std::to_string(sum);
+}
+}
+
+DayDescription Day3::description()
+{
+    DayDescription description { 3, 2024 };
+    description.part1 = day3::part1;
+    description.part2 = day3::part2;
+    description.part1_test_result = "161";
+    description.part2_test_result = "48";
+    description.test_input = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))";
+    return description;
 }

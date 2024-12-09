@@ -7,25 +7,23 @@
 #include <optional>
 #include <string>
 
+typedef std::string (*PartFunc)(std::istream& input);
+
+struct DayDescription {
+    int day;
+    int year;
+    std::optional<std::string> test_input = std::nullopt;
+    std::optional<std::string> part1_test_result = std::nullopt;
+    std::optional<std::string> part2_test_result = std::nullopt;
+    bool is_slow = false;
+
+    PartFunc part1 = 0;
+    PartFunc part2 = 0;
+};
+
 class Day {
 public:
-    struct TestResult {
-        std::string message;
-        bool success;
-    };
-
-    TestResult test();
-    std::string run();
-
-public:
-    virtual std::string part1(std::istream& input) = 0;
-    virtual std::string part2(std::istream& input) = 0;
-    virtual int day() = 0;
-    virtual int year() = 0;
-
-    virtual std::optional<std::string> part1_test_result() { return std::nullopt; };
-    virtual std::optional<std::string> part2_test_result() { return std::nullopt; };
-    virtual std::optional<std::string> test_input() { return std::nullopt; };
+    virtual DayDescription description() = 0;
 
     Day() = default;
     virtual ~Day() = default;
@@ -35,6 +33,7 @@ public:
     Day& operator=(Day&&) = default;
 };
 
+namespace aoc {
 int run_all(const std::vector<std::unique_ptr<Day>>& days);
 
 template <typename... Ds>
@@ -42,6 +41,7 @@ int run_all()
 {
     std::unique_ptr<Day> init[] { std::make_unique<Ds>()... };
     return run_all(std::vector<std::unique_ptr<Day>> { std::make_move_iterator(std::begin(init)), std::make_move_iterator(std::end(init)) });
+}
 }
 
 #endif

@@ -12,8 +12,8 @@
 
 #include "days.h"
 
-namespace {
-namespace part1 {
+namespace day9 {
+namespace part1_impl {
     std::vector<std::optional<int>> parse(std::istream& input)
     {
         char c;
@@ -61,7 +61,7 @@ namespace part1 {
     }
 }
 
-namespace part2 {
+namespace part2_impl {
     struct Block {
         std::optional<int> id;
         uint64_t size;
@@ -133,22 +133,33 @@ uint64_t calc_checksum(const std::vector<std::optional<int>>& blocks)
     }
     return sum;
 }
-}
 
-std::string Day9::part1(std::istream& input)
+std::string part1(std::istream& input)
 {
-    using namespace part1;
+    using namespace part1_impl;
     auto blocks = parse(input);
     defrag(blocks);
     auto checksum = calc_checksum(blocks);
     return std::to_string(checksum);
 }
 
-std::string Day9::part2(std::istream& input)
+std::string part2(std::istream& input)
 {
-    using namespace part2;
+    using namespace part2_impl;
     auto blocks = parse(input);
     defrag(blocks);
     auto checksum = calc_checksum(expand(blocks));
     return std::to_string(checksum);
+}
+}
+
+DayDescription Day9::description()
+{
+    DayDescription description { 9, 2024 };
+    description.part1 = day9::part1;
+    description.part2 = day9::part2;
+    description.part1_test_result = "1928";
+    description.part2_test_result = "2858";
+    description.test_input = "2333133121414131402";
+    return description;
 }

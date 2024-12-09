@@ -10,28 +10,31 @@
 #include <string>
 #include <vector>
 
-#include "day.h"
+#include "aoc.h"
 
-Day::TestResult Day::test()
+namespace {
+struct TestResult {
+    std::string message;
+    bool success;
+};
+
+TestResult operator+(const TestResult& lhs, const TestResult& rhs)
+{
+    return { lhs.message + rhs.message, lhs.success && rhs.success };
+}
+
+TestResult run_test(PartFunc func, const std::optional<std::string>& test_result, const std::string& test_input)
 {
     std::ostringstream output;
-
-    if (!test_input().has_value()) {
-        output << "No test input for day " << day() << "\n";
-        return { output.str(), true };
-    }
-
     bool success = true;
-
-    output << "Running tests for day " << day() << "\n";
-    if (part1_test_result().has_value()) {
-        std::stringstream input(test_input().value());
+    if (test_result.has_value()) {
+        std::stringstream input(test_input);
         try {
-            auto result = part1(input);
-            if (result == part1_test_result().value()) {
+            auto result = func(input);
+            if (result == test_result.value()) {
                 output << "Part 1 passed\n";
             } else {
-                output << "Part 1 failed: Expected " << part1_test_result().value() << ", got " << result << "\n";
+                output << "Part 1 failed: Expected " << test_result.value() << ", got " << result << "\n";
                 success = false;
             }
         } catch (const std::exception& e) {
@@ -42,33 +45,48 @@ Day::TestResult Day::test()
         output << "No test result for part 1\n";
     }
 
-    if (part2_test_result().has_value()) {
-        std::stringstream input(test_input().value());
-        try {
-            auto result = part2(input);
-            if (result == part2_test_result().value()) {
-                output << "Part 2 passed\n";
-            } else {
-                output << "Part 2 failed: Expected " << part2_test_result().value() << ", got " << result << "\n";
-                success = false;
-            }
-        } catch (const std::exception& e) {
-            output << "Part 2 failed: " << e.what() << "\n";
-            success = false;
-        }
-    } else {
-        output << "No test result for part 2\n";
-    }
-
     return { output.str(), success };
 }
 
-std::string Day::run()
+TestResult run_tests(const DayDescription& description)
+{
+    if (!description.test_input.has_value()) {
+        return { "No test input for day " + std::to_string(description.day) + "\n", true };
+    }
+
+    auto result1 = run_test(description.part1, description.part1_test_result, description.test_input.value());
+    auto result2 = run_test(description.part2, description.part2_test_result, description.test_input.value());
+
+    return TestResult { "Running tests for day " + std::to_string(description.day) + " for year " + "\n", true } + result1 + result2;
+}
+
+std::string run_part(PartFunc func, std::istream& input)
 {
     std::ostringstream output;
 
-    output << "Day " << day() << ": ";
-    std::string filename = "data/" + std::to_string(year()) + "/day" + std::to_string(day()) + ".dat";
+    if (!func) {
+        return "Not implemented";
+    }
+
+    try {
+        auto start = std::chrono::high_resolution_clock::now();
+        auto result = func(input);
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration<double, std::milli>(end - start);
+        output << std::format("{:>15} {:7.2f}ms ", result, duration.count());
+    } catch (const std::exception& e) {
+        output << "Error: " << e.what();
+    }
+
+    return output.str();
+}
+
+std::string run_day(DayDescription& description)
+{
+    std::ostringstream output;
+
+    output << "Day " << description.day << ": ";
+    std::string filename = "data/" + std::to_string(description.year) + "/day" + std::to_string(description.day) + ".dat";
     std::ifstream input(filename, std::ios::in);
 
     if (!input.is_open()) {
@@ -76,36 +94,20 @@ std::string Day::run()
         return output.str();
     }
 
-    try {
-        auto start = std::chrono::high_resolution_clock::now();
-        auto result = part1(input);
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration<double, std::milli>(end - start);
-        output << std::format("{:>15} {:7.2f}ms ", result, duration.count());
-    } catch (const std::exception& e) {
-        output << "Error: " << e.what();
-    }
-
+    output << run_part(description.part1, input);
     output << "   ";
 
     input.clear();
     input.seekg(0, std::ios::beg);
 
-    try {
-        auto start = std::chrono::high_resolution_clock::now();
-        auto result = part2(input);
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration<double, std::milli>(end - start);
-        output << std::format("{:>15} {:7.2f}ms ", result, duration.count());
-    } catch (const std::exception& e) {
-        output << "Error: " << e.what();
-    }
+    output << run_part(description.part2, input);
     output << "\n";
 
     return output.str();
 }
+}
 
-int run_all(const std::vector<std::unique_ptr<Day>>& days)
+int aoc::run_all(const std::vector<std::unique_ptr<Day>>& days)
 {
     const int SUCCESS = 0;
     const int FAILURE = 1;
@@ -113,28 +115,34 @@ int run_all(const std::vector<std::unique_ptr<Day>>& days)
     int failures = 0;
     std::string messages;
 
-    int year = days[0]->year();
+    std::vector<DayDescription> descriptions;
+    for (auto& day : days) {
+        descriptions.emplace_back(day->description());
+    }
+
+    int year = descriptions[0].year;
     std::set<int> day_set;
 
-    for (auto& day : days) {
-        if (day->year() != year) {
+    for (auto& description : descriptions) {
+        if (description.year != year) {
             std::cout << "Days must be in same year\n";
             return FAILURE;
         }
-        if (day_set.find(day->day()) != day_set.end()) {
-            std::cout << "Day " << day->day() << " is not unique\n";
+        if (day_set.find(description.day) != day_set.end()) {
+            std::cout << "Day " << description.day << " is not unique\n";
             return FAILURE;
         }
-        day_set.insert(day->day());
+        day_set.insert(description.day);
     }
 
-    for (auto& day : days) {
-        Day::TestResult result = day->test();
+    for (auto& description : descriptions) {
+        TestResult result = run_tests(description);
         messages += result.message;
         if (!result.success) {
             failures++;
         }
     }
+
     if (failures > 0) {
         std::cout << messages << "\n";
         std::cout << failures << " tests failed\n";
@@ -142,8 +150,9 @@ int run_all(const std::vector<std::unique_ptr<Day>>& days)
     }
 
     std::cout << "All tests passed\n\n";
-    for (auto& day : days) {
-        std::cout << day->run();
+
+    for (auto& description : descriptions) {
+        std::cout << run_day(description);
     }
 
     return SUCCESS;

@@ -11,7 +11,7 @@
 
 #include "days.h"
 
-namespace {
+namespace day8 {
 
 class Point {
 public:
@@ -56,9 +56,8 @@ bool is_inside(const Point& point, std::size_t width, std::size_t height)
 {
     return point.x >= 0 && point.x < static_cast<int>(width) && point.y >= 0 && point.y < static_cast<int>(height);
 }
-}
 
-std::string Day8::part1(std::istream& input)
+std::string part1(std::istream& input)
 {
     auto [map, width, height] = parse(input);
 
@@ -80,7 +79,7 @@ std::string Day8::part1(std::istream& input)
     return std::to_string(antinodes.size());
 }
 
-std::string Day8::part2(std::istream& input)
+std::string part2(std::istream& input)
 {
     auto [map, width, height] = parse(input);
 
@@ -103,4 +102,16 @@ std::string Day8::part2(std::istream& input)
     }
 
     return std::to_string(antinodes.size());
+}
+}
+
+DayDescription Day8::description()
+{
+    DayDescription description { 8, 2024 };
+    description.part1 = day8::part1;
+    description.part2 = day8::part2;
+    description.part1_test_result = "14";
+    description.part2_test_result = "34";
+    description.test_input = "............\n........0...\n.....0......\n.......0....\n....0.......\n......A.....\n............\n............\n........A...\n.........A..\n............\n............\n";
+    return description;
 }

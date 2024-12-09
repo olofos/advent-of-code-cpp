@@ -9,7 +9,7 @@
 
 #include "days.h"
 
-namespace {
+namespace day6 {
 
 struct Dir {
     int x;
@@ -124,10 +124,7 @@ Map parse(std::istream& input)
     return map;
 }
 
-}
-
-std::string
-Day6::part1(std::istream& input)
+std::string part1(std::istream& input)
 {
     Map map = parse(input);
     std::set<Point> visited = { map.guard };
@@ -139,7 +136,7 @@ Day6::part1(std::istream& input)
     return std::to_string(visited.size());
 }
 
-std::string Day6::part2(std::istream& input)
+std::string part2(std::istream& input)
 {
     Map map = parse(input);
     std::map<Point, uint8_t> visited = { { map.guard, map.dir.index() } };
@@ -155,4 +152,16 @@ std::string Day6::part2(std::istream& input)
     }
 
     return std::to_string(loop_obstacles.size());
+}
+}
+
+DayDescription Day6::description()
+{
+    DayDescription description { 6, 2024 };
+    description.part1 = day6::part1;
+    description.part2 = day6::part2;
+    description.part1_test_result = "41";
+    description.part2_test_result = "6";
+    description.test_input = "....#.....\n.........#\n..........\n..#.......\n.......#..\n..........\n.#..^.....\n........#.\n#.........\n......#...\n";
+    return description;
 }

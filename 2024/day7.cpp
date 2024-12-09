@@ -65,11 +65,8 @@ bool check2(uint64_t sum, uint64_t accum, std::span<uint64_t> terms)
     auto n3 = get_power_of_ten(terms[0]) * accum + terms[0];
     return check2(sum, n1, terms.subspan(1)) || check2(sum, n2, terms.subspan(1)) || check2(sum, n3, terms.subspan(1));
 }
-}
 
-using namespace day7;
-
-std::string Day7::part1(std::istream& input)
+std::string part1(std::istream& input)
 {
     auto list = parse(input);
     uint64_t total = 0;
@@ -82,7 +79,7 @@ std::string Day7::part1(std::istream& input)
     return std::to_string(total);
 }
 
-std::string Day7::part2(std::istream& input)
+std::string part2(std::istream& input)
 {
     auto list = parse(input);
     uint64_t total = 0;
@@ -93,4 +90,16 @@ std::string Day7::part2(std::istream& input)
     }
 
     return std::to_string(total);
+}
+}
+
+DayDescription Day7::description()
+{
+    DayDescription description { 7, 2024 };
+    description.part1 = day7::part1;
+    description.part2 = day7::part2;
+    description.part1_test_result = "3749";
+    description.part2_test_result = "11387";
+    description.test_input = "190: 10 19\n3267: 81 40 27\n83: 17 5\n156: 15 6\n7290: 6 8 6 15\n161011: 16 10 13\n192: 17 8 14\n21037: 9 7 18 13\n292: 11 6 16 20\n";
+    return description;
 }

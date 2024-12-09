@@ -7,7 +7,7 @@
 
 #include "days.h"
 
-namespace {
+namespace day1 {
 std::pair<std::vector<int>, std::vector<int>> parse(std::istream& input)
 {
     int a, b;
@@ -23,9 +23,8 @@ std::pair<std::vector<int>, std::vector<int>> parse(std::istream& input)
 
     return { values1, values2 };
 }
-}
 
-std::string Day1::part1(std::istream& input)
+std::string part1(std::istream& input)
 {
     auto [values1, values2] = parse(input);
 
@@ -37,7 +36,7 @@ std::string Day1::part1(std::istream& input)
     return std::to_string(sum);
 }
 
-std::string Day1::part2(std::istream& input)
+std::string part2(std::istream& input)
 {
     auto [values1, values2] = parse(input);
 
@@ -53,4 +52,16 @@ std::string Day1::part2(std::istream& input)
     }
 
     return std::to_string(sum);
+}
+}
+
+DayDescription Day1::description()
+{
+    DayDescription description { 1, 2024 };
+    description.part1 = day1::part1;
+    description.part2 = day1::part2;
+    description.part1_test_result = "11";
+    description.part2_test_result = "31";
+    description.test_input = "3   4\n4   3\n2   5\n1   3\n3   9\n3   3";
+    return description;
 }

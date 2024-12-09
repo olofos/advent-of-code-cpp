@@ -6,7 +6,7 @@
 
 #include "days.h"
 
-namespace {
+namespace day4 {
 std::vector<std::string> read_lines(std::istream& input)
 {
     std::string line;
@@ -46,9 +46,8 @@ std::vector<std::pair<int, int>> get_offsets(std::size_t x, std::size_t y, std::
     }
     return offsets;
 }
-}
 
-std::string Day4::part1(std::istream& input)
+std::string part1(std::istream& input)
 {
     auto lines = read_lines(input);
 
@@ -72,7 +71,7 @@ std::string Day4::part1(std::istream& input)
     return std::to_string(count);
 }
 
-std::string Day4::part2(std::istream& input)
+std::string part2(std::istream& input)
 {
     auto lines = read_lines(input);
 
@@ -93,4 +92,16 @@ std::string Day4::part2(std::istream& input)
     }
 
     return std::to_string(count);
+}
+}
+
+DayDescription Day4::description()
+{
+    DayDescription description { 4, 2024 };
+    description.part1 = day4::part1;
+    description.part2 = day4::part2;
+    description.part1_test_result = "18";
+    description.part2_test_result = "9";
+    description.test_input = "MMMSXXMASM\nMSAMXMSMSA\nAMXSXMAAMM\nMSAMASMSMX\nXMASAMXAMM\nXXAMMXXAMA\nSMSMSASXSS\nSAXAMASAAA\nMAMMMXMMMM\nMXMXAXMASX\n";
+    return description;
 }
