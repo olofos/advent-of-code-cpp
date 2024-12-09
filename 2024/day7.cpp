@@ -11,7 +11,7 @@
 
 #include "days.h"
 
-namespace {
+namespace day7 {
 std::vector<std::pair<uint64_t, std::vector<uint64_t>>> parse(std::istream& input)
 {
     std::vector<std::pair<uint64_t, std::vector<uint64_t>>> result;
@@ -66,6 +66,8 @@ bool check2(uint64_t sum, uint64_t accum, std::span<uint64_t> terms)
     return check2(sum, n1, terms.subspan(1)) || check2(sum, n2, terms.subspan(1)) || check2(sum, n3, terms.subspan(1));
 }
 }
+
+using namespace day7;
 
 std::string Day7::part1(std::istream& input)
 {
