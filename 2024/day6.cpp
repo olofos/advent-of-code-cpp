@@ -8,8 +8,11 @@
 #include <vector>
 
 #include "days.h"
+#include "util.h"
 
 namespace day6 {
+
+using aoc::Point;
 
 struct Dir {
     int x;
@@ -29,16 +32,8 @@ struct Dir {
             return 8;
         }
     }
-};
 
-struct Point {
-    int x;
-    int y;
-
-    Point operator+(const Dir& other) const { return { x + other.x, y + other.y }; }
-    Point operator+=(const Dir& other) { return *this = *this + other; }
-
-    auto operator<=>(const Point&) const = default;
+    operator Point() const { return { x, y }; }
 };
 
 struct Map {

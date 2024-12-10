@@ -8,6 +8,12 @@ public:
     int x;
     int y;
 
+    Point()
+        : x(0)
+        , y(0)
+    {
+    }
+
     Point(int x, int y)
         : x(x)
         , y(y)
@@ -24,6 +30,7 @@ public:
     Point operator+=(const Point& other) { return { x += other.x, y += other.y }; }
 };
 
+inline Point operator+(const Point& lhs, const Point& rhs) { return { lhs.x + rhs.x, lhs.y + rhs.y }; }
 inline Point operator-(const Point& lhs, const Point& rhs) { return { lhs.x - rhs.x, lhs.y - rhs.y }; }
 inline Point operator*(int lhs, const Point& rhs) { return { lhs * rhs.x, lhs * rhs.y }; }
 }

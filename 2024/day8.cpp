@@ -10,26 +10,11 @@
 #include <vector>
 
 #include "days.h"
+#include "util.h"
 
 namespace day8 {
 
-class Point {
-public:
-    int x;
-    int y;
-
-    Point(int x, int y)
-        : x(x)
-        , y(y)
-    {
-    }
-    auto operator<=>(const Point&) const = default;
-
-    Point operator+=(const Point& other) { return { x += other.x, y += other.y }; }
-};
-
-Point operator-(const Point& lhs, const Point& rhs) { return { lhs.x - rhs.x, lhs.y - rhs.y }; }
-Point operator*(int lhs, const Point& rhs) { return { lhs * rhs.x, lhs * rhs.y }; }
+using aoc::Point;
 
 std::tuple<std::map<char, std::vector<Point>>, std::size_t, std::size_t> parse(std::istream& input)
 {
