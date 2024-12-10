@@ -20,7 +20,7 @@ std::string part2(std::istream& input)
 }
 }
 
-DayDescription Day5::description()
+DayDescription DayX::description()
 {
     DayDescription description { X, 2024 };
     description.part1 = dayX::part1;
