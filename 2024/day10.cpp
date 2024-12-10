@@ -37,8 +37,8 @@ std::vector<std::string> extend(const std::vector<std::string>& lines)
     return extended;
 }
 
-template <typename T, typename F1, typename F2, typename F3>
-std::size_t count_paths(const std::vector<std::string>& lines, F1 insert_func, F2 accum_func, F3 extract_func)
+template <typename T>
+std::size_t count_paths(const std::vector<std::string>& lines)
 {
     std::map<Point, T> prev;
     std::map<Point, T> curr;
@@ -46,7 +46,7 @@ std::size_t count_paths(const std::vector<std::string>& lines, F1 insert_func, F
     for (unsigned y = 1; y < lines.size() - 1; y++) {
         for (unsigned x = 1; x < lines[y].size() - 1; x++) {
             if (lines[y][x] == '9') {
-                insert_func(curr[{ x, y }], { x, y });
+                curr[{ x, y }] = T({ x, y });
             }
         }
     }
@@ -58,30 +58,61 @@ std::size_t count_paths(const std::vector<std::string>& lines, F1 insert_func, F
         for (unsigned y = 1; y < lines.size() - 1; y++) {
             for (unsigned x = 1; x < lines[y].size() - 1; x++) {
                 if (lines[y][x] == c) {
-                    accum_func(curr[{ x, y }], prev[{ x + 1, y }]);
-                    accum_func(curr[{ x, y }], prev[{ x - 1, y }]);
-                    accum_func(curr[{ x, y }], prev[{ x, y + 1 }]);
-                    accum_func(curr[{ x, y }], prev[{ x, y - 1 }]);
+                    curr[{ x, y }] += prev[{ x + 1, y }];
+                    curr[{ x, y }] += prev[{ x - 1, y }];
+                    curr[{ x, y }] += prev[{ x, y + 1 }];
+                    curr[{ x, y }] += prev[{ x, y - 1 }];
                 }
             }
         }
     }
 
-    auto count = std::accumulate(curr.begin(), curr.end(), std::size_t {}, [&](auto sum, auto& p) { return sum + extract_func(p.second); });
+    auto count = std::accumulate(curr.begin(), curr.end(), std::size_t {}, [&](auto sum, auto& p) { return sum + p.second; });
     return count;
 }
 
-std::string part1(std::istream& input)
+class SetAccumulator {
+    std::set<Point> values;
+
+public:
+    SetAccumulator() { }
+    SetAccumulator(Point p)
+        : values { p }
+    {
+    }
+    void operator+=(const SetAccumulator& other) { values.insert(other.values.begin(), other.values.end()); }
+    operator std::size_t() const { return values.size(); }
+};
+
+class ValueAccumulator {
+    std::size_t value;
+
+public:
+    ValueAccumulator()
+        : value(0)
+    {
+    }
+    ValueAccumulator(Point)
+        : value(1)
+    {
+    }
+    void insert(Point) { value += 1; }
+    void operator+=(const ValueAccumulator& other) { value += other.value; }
+    operator std::size_t() const { return value; }
+};
+
+std::string
+part1(std::istream& input)
 {
     std::vector<std::string> lines = extend(read_lines(input));
-    auto count = count_paths<std::set<Point>>(lines, [](std::set<Point>& m, Point p) { m.insert(p); }, [](auto& a, auto& b) { return a.insert(b.begin(), b.end()); }, [](auto& p) { return p.size(); });
+    auto count = count_paths<SetAccumulator>(lines);
     return std::to_string(count);
 }
 
 std::string part2(std::istream& input)
 {
     std::vector<std::string> lines = extend(read_lines(input));
-    auto count = count_paths<std::size_t>(lines, [](std::size_t& m, Point) { m = 1; }, [](auto& a, auto& b) { return a += b; }, [](auto& p) { return p; });
+    auto count = count_paths<ValueAccumulator>(lines);
     return std::to_string(count);
 }
 }
