@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <cstdlib>
+#include <functional>
 #include <iterator>
+#include <numeric>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -22,34 +24,20 @@ std::vector<std::vector<int>> parse(std::istream& input)
 
 bool is_safe(const std::vector<int>& row, size_t size)
 {
-    bool increasing = true;
-    bool decreasing = true;
-    bool safe_step = true;
-    for (unsigned i = 0; i < size - 1; i++) {
-        int diff = row[i + 1] - row[i];
-        if (diff <= 0) {
-            increasing = false;
-        }
-        if (diff >= 0) {
-            decreasing = false;
-        }
-        if (std::abs(diff) > 3) {
-            safe_step = false;
-        }
-    }
+    auto [increasing, decreasing] = std::transform_reduce(
+        row.begin(),
+        row.begin() + size - 1,
+        row.begin() + 1, std::pair { true, true },
+        [](std::pair<bool, bool> a, std::pair<bool, bool> b) { return std::pair<bool, bool> { a.first && b.first, a.second && b.second }; },
+        [](int a, int b) { return std::pair<bool, bool> { (a > b) && (a <= b + 3), (b > a) && (b <= a + 3) }; });
 
-    return (increasing || decreasing) && safe_step;
+    return increasing || decreasing;
 }
 
 std::string part1(std::istream& input)
 {
     auto numbers = parse(input);
-    int count = 0;
-    for (auto& row : numbers) {
-        if (is_safe(row, row.size())) {
-            count++;
-        }
-    }
+    auto count = std::count_if(numbers.begin(), numbers.end(), [](auto row) { return is_safe(row, row.size()); });
 
     return std::to_string(count);
 }
