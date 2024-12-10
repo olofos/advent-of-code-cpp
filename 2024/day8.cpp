@@ -29,7 +29,7 @@ std::tuple<std::map<char, std::vector<Point>>, std::size_t, std::size_t> parse(s
     for (unsigned y = 0; y < lines.size(); y++) {
         for (unsigned x = 0; x < lines[y].size(); x++) {
             if (lines[y][x] != '.') {
-                map[lines[y][x]].push_back({ static_cast<int>(x), static_cast<int>(y) });
+                map[lines[y][x]].push_back({ x, y });
             }
         }
     }
