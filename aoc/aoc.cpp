@@ -85,7 +85,7 @@ std::string run_day(DayDescription& description)
 {
     std::ostringstream output;
 
-    output << "Day " << description.day << ": ";
+    output << "Day " << description.day << (description.day < 10 ? ":  " : ": ");
     std::string filename = "data/" + std::to_string(description.year) + "/day" + std::to_string(description.day) + ".dat";
     std::ifstream input(filename, std::ios::in);
 
