@@ -24,8 +24,8 @@ public:
     Point operator+=(const Point& other) { return { x += other.x, y += other.y }; }
 };
 
-Point operator-(const Point& lhs, const Point& rhs) { return { lhs.x - rhs.x, lhs.y - rhs.y }; }
-Point operator*(int lhs, const Point& rhs) { return { lhs * rhs.x, lhs * rhs.y }; }
+inline Point operator-(const Point& lhs, const Point& rhs) { return { lhs.x - rhs.x, lhs.y - rhs.y }; }
+inline Point operator*(int lhs, const Point& rhs) { return { lhs * rhs.x, lhs * rhs.y }; }
 }
 
 #endif
