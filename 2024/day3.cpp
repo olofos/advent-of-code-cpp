@@ -1,4 +1,5 @@
 #include <fstream>
+#include <numeric>
 #include <regex>
 #include <string>
 
@@ -11,16 +12,7 @@ std::string part1(std::istream& input)
     std::regex re(R"(mul\((\d+),(\d+)\))");
     int sum = 0;
     while (std::getline(input, line)) {
-        std::smatch match;
-
-        auto it = std::sregex_iterator(line.begin(), line.end(), re);
-        auto end = std::sregex_iterator();
-        for (; it != end; ++it) {
-            match = *it;
-            int a = std::stoi(match[1]);
-            int b = std::stoi(match[2]);
-            sum += a * b;
-        }
+        sum += std::transform_reduce(std::sregex_iterator(line.begin(), line.end(), re), std::sregex_iterator(), 0, std::plus<int>(), [](auto m) { return std::stoi(m[1]) * std::stoi(m[2]); });
     }
     return std::to_string(sum);
 }
