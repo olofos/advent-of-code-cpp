@@ -65,17 +65,6 @@ struct Map {
 
         return is_inside(guard);
     }
-
-    std::vector<Point> shoot_ray(const Dir& dir_)
-    {
-        Point point = guard;
-        std::vector<Point> points = { point };
-        while (is_inside(point) && !is_obstacle(point)) {
-            points.push_back(point);
-            point += dir_;
-        }
-        return points;
-    }
 };
 
 bool has_loop(Map& map, std::map<Point, uint8_t> visited, Point obstacle)
