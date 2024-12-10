@@ -23,7 +23,7 @@ TestResult operator+(const TestResult& lhs, const TestResult& rhs)
     return { lhs.message + rhs.message, lhs.success && rhs.success };
 }
 
-TestResult run_test(PartFunc func, const std::optional<std::string>& test_result, const std::string& test_input)
+TestResult run_test(PartFunc func, const std::optional<std::string>& test_result, const std::string& test_input, int part)
 {
     std::ostringstream output;
     bool success = true;
@@ -32,17 +32,17 @@ TestResult run_test(PartFunc func, const std::optional<std::string>& test_result
         try {
             auto result = func(input);
             if (result == test_result.value()) {
-                output << "Part 1 passed\n";
+                output << "Part " << part << " passed\n";
             } else {
-                output << "Part 1 failed: Expected " << test_result.value() << ", got " << result << "\n";
+                output << "Part " << part << " failed: Expected " << test_result.value() << ", got " << result << "\n";
                 success = false;
             }
         } catch (const std::exception& e) {
-            output << "Part 1 failed: " << e.what() << "\n";
+            output << "Part " << part << " failed: " << e.what() << "\n";
             success = false;
         }
     } else {
-        output << "No test result for part 1\n";
+        output << "No test result for part " << part << "\n";
     }
 
     return { output.str(), success };
@@ -54,8 +54,8 @@ TestResult run_tests(const DayDescription& description)
         return { "No test input for day " + std::to_string(description.day) + "\n", true };
     }
 
-    auto result1 = run_test(description.part1, description.part1_test_result, description.test_input.value());
-    auto result2 = run_test(description.part2, description.part2_test_result, description.test_input.value());
+    auto result1 = run_test(description.part1, description.part1_test_result, description.test_input.value(), 1);
+    auto result2 = run_test(description.part2, description.part2_test_result, description.test_input.value(), 2);
 
     return TestResult { "Running tests for day " + std::to_string(description.day) + " for year " + "\n", true } + result1 + result2;
 }
