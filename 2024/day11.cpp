@@ -2,6 +2,7 @@
 #include <iostream>
 #include <istream>
 #include <map>
+#include <numeric>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -9,12 +10,12 @@
 #include "days.h"
 
 namespace day11 {
-std::vector<uint64_t> parse(std::istream& input)
+std::map<uint64_t, uint64_t> parse(std::istream& input)
 {
     uint64_t value;
-    std::vector<uint64_t> result;
+    std::map<uint64_t, uint64_t> result;
     while (input >> value) {
-        result.push_back(value);
+        result[value] += 1;
     }
     return result;
 }
@@ -34,36 +35,51 @@ std::optional<uint64_t> half_power_of_ten(uint64_t n)
     }
 }
 
-std::string part1(std::istream& input)
+std::map<uint64_t, uint64_t> step(std::map<uint64_t, uint64_t> prev)
 {
-    auto curr = parse(input);
-    decltype(curr) prev;
+    std::map<uint64_t, uint64_t> curr;
 
-    for (int i = 0; i < 25; i++) {
-        prev.swap(curr);
-        curr.clear();
-
-        for (auto n : prev) {
-            if (n == 0) {
-                curr.push_back(1);
+    for (auto& [n, count] : prev) {
+        if (n == 0) {
+            curr[1] += count;
+        } else {
+            std::optional<uint64_t> power = half_power_of_ten(n);
+            if (power.has_value()) {
+                curr[n / power.value()] += count;
+                curr[n % power.value()] += count;
             } else {
-                std::optional<uint64_t> power = half_power_of_ten(n);
-                if (power.has_value()) {
-                    curr.push_back(n / power.value());
-                    curr.push_back(n % power.value());
-                } else {
-                    curr.push_back(2024 * n);
-                }
+                curr[2024 * n] += count;
             }
         }
     }
 
-    return std::to_string(curr.size());
+    return curr;
+}
+
+std::string part1(std::istream& input)
+{
+    auto counts = parse(input);
+
+    for (int i = 0; i < 25; i++) {
+        counts = step(counts);
+    }
+
+    auto count = std::accumulate(counts.begin(), counts.end(), uint64_t {}, [](auto a, auto b) { return a + b.second; });
+
+    return std::to_string(count);
 }
 
 std::string part2(std::istream& input)
 {
-    throw std::runtime_error("not implemented");
+    auto counts = parse(input);
+
+    for (int i = 0; i < 75; i++) {
+        counts = step(counts);
+    }
+
+    auto count = std::accumulate(counts.begin(), counts.end(), uint64_t {}, [](auto a, auto b) { return a + b.second; });
+
+    return std::to_string(count);
 }
 }
 
