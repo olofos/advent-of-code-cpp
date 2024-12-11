@@ -89,7 +89,7 @@ DayDescription Day11::description()
     description.part1 = day11::part1;
     description.part2 = day11::part2;
     description.part1_test_result = "55312";
-    // description.part2_test_result = "";
+    description.part2_test_result = "65601038650482";
     description.test_input = "125 17";
     return description;
 }
