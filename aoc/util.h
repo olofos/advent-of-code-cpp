@@ -33,6 +33,9 @@ public:
 inline Point operator+(const Point& lhs, const Point& rhs) { return { lhs.x + rhs.x, lhs.y + rhs.y }; }
 inline Point operator-(const Point& lhs, const Point& rhs) { return { lhs.x - rhs.x, lhs.y - rhs.y }; }
 inline Point operator*(int lhs, const Point& rhs) { return { lhs * rhs.x, lhs * rhs.y }; }
+
+std::vector<std::string> read_lines(std::istream& input);
+std::vector<std::string> read_lines_with_border(std::istream& input, char border = '.');
 }
 
 #endif

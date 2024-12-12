@@ -14,29 +14,6 @@
 namespace day10 {
 using Point = aoc::Point;
 
-std::vector<std::string> read_lines(std::istream& input)
-{
-    std::string line;
-    std::vector<std::string> lines;
-    while (getline(input, line)) {
-        lines.emplace_back(line);
-    }
-    return lines;
-}
-
-std::vector<std::string> extend(const std::vector<std::string>& lines)
-{
-    std::vector<std::string> extended;
-    extended.reserve(lines.size() + 2);
-    extended.push_back(std::string(lines[0].size() + 2, '.'));
-    for (const auto& line : lines) {
-        extended.emplace_back('.' + line + '.');
-    }
-    extended.push_back(std::string(lines[0].size() + 2, '.'));
-
-    return extended;
-}
-
 template <typename T>
 std::size_t count_paths(const std::vector<std::string>& lines)
 {
@@ -104,14 +81,14 @@ public:
 std::string
 part1(std::istream& input)
 {
-    std::vector<std::string> lines = extend(read_lines(input));
+    std::vector<std::string> lines = aoc::read_lines_with_border(input);
     auto count = count_paths<SetAccumulator>(lines);
     return std::to_string(count);
 }
 
 std::string part2(std::istream& input)
 {
-    std::vector<std::string> lines = extend(read_lines(input));
+    std::vector<std::string> lines = aoc::read_lines_with_border(input);
     auto count = count_paths<ValueAccumulator>(lines);
     return std::to_string(count);
 }
