@@ -14,35 +14,38 @@
 namespace day12 {
 using aoc::Point;
 
-uint64_t flood_fill(std::vector<std::string>& lines, aoc::Point start)
+struct Region {
+    char name;
+    std::set<Point> points;
+    uint64_t circum;
+    uint64_t area;
+};
+
+Region flood_fill(std::vector<std::string>& lines, aoc::Point start)
 {
-    std::queue<Point> queue;
-    std::set<Point> region;
-    queue.push(start);
-    char region_name = lines[start.y][start.x];
-    uint64_t area = 0;
-    uint64_t circum = 0;
+    Region region { lines[start.y][start.x], {}, 0, 0 };
+    std::queue<Point> queue({ { start } });
     while (!queue.empty()) {
         auto point = queue.front();
         queue.pop();
-        if (lines[point.y][point.x] != region_name) {
+        if (lines[point.y][point.x] != region.name) {
             continue;
         }
-        region.insert(point);
+        region.points.insert(point);
         std::array<Point, 4> offsets = { { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } } };
         int neighbors = 0;
         for (auto& offset : offsets) {
             auto p = point + offset;
-            if (region.contains(p)) {
+            if (region.points.contains(p)) {
                 neighbors++;
             }
             queue.push(p);
         }
-        circum += 4 - 2 * neighbors;
-        area++;
+        region.circum += 4 - 2 * neighbors;
+        region.area++;
         lines[point.y][point.x] = '.';
     }
-    return area * circum;
+    return region;
 }
 
 std::string part1(std::istream& input)
@@ -53,7 +56,8 @@ std::string part1(std::istream& input)
     for (unsigned y = 1; y < lines.size() - 1; y++) {
         for (unsigned x = 1; x < lines[y].size() - 1; x++) {
             if (lines[y][x] != '.') {
-                score += flood_fill(lines, { x, y });
+                auto region = flood_fill(lines, { x, y });
+                score += region.circum * region.area;
             }
         }
     }
