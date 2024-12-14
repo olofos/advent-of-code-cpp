@@ -2,6 +2,7 @@
 #include <array>
 #include <iostream>
 #include <istream>
+#include <map>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -93,9 +94,71 @@ std::string part1(std::istream& input)
     return std::to_string(score);
 }
 
+void print_map(const std::vector<Robot>& robots, int width, int height)
+{
+    std::map<Point, int> points;
+    for (auto& r : robots) {
+        points[r.position]++;
+    }
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            if (points.find({ x, y }) == points.end()) {
+                std::cout << ".";
+            } else {
+                std::cout << points[{ x, y }];
+            }
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
+
 std::string part2(std::istream& input)
 {
-    throw std::runtime_error("not implemented");
+    auto robots = parse(input);
+
+    int width = 101, height = 103;
+    unsigned step;
+
+    for (step = 0; step < 10000; step++) {
+        std::vector<std::vector<int>> entries(height);
+
+        for (auto& r : robots) {
+            auto pt = r.position + r.velocity;
+            r.position = {
+                (pt.x % width + width) % width,
+                (pt.y % height + height) % height
+            };
+            entries[r.position.y].push_back(r.position.x);
+        }
+
+        int max_count = 0;
+        for (auto& line : entries) {
+            if (line.size() < 2) {
+                continue;
+            }
+            std::sort(line.begin(), line.end());
+            auto end = std::unique(line.begin(), line.end());
+            int max_line_count = 0;
+            int line_count = 0;
+            for (auto it = line.begin(); it != end - 1; ++it) {
+                if (*(it + 1) - *it == 1) {
+                    line_count++;
+                    max_line_count = std::max(line_count, max_line_count);
+                } else {
+                    line_count = 0;
+                }
+            }
+            max_count = std::max(max_line_count, max_count);
+        }
+
+        if (max_count > 8) {
+            print_map(robots, width, height);
+            return std::to_string(step);
+        }
+    }
+    return "no tree found";
 }
 }
 
