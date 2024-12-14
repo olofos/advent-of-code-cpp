@@ -94,26 +94,6 @@ std::string part1(std::istream& input)
     return std::to_string(score);
 }
 
-void print_map(const std::vector<Robot>& robots, int width, int height)
-{
-    std::map<Point, int> points;
-    for (auto& r : robots) {
-        points[r.position]++;
-    }
-
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            if (points.find({ x, y }) == points.end()) {
-                std::cout << ".";
-            } else {
-                std::cout << points[{ x, y }];
-            }
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-}
-
 std::string part2(std::istream& input)
 {
     auto robots = parse(input);
@@ -138,7 +118,6 @@ std::string part2(std::istream& input)
 
         for (auto& row : entries) {
             if (std::find(row.begin(), row.end(), 0xFF) != row.end()) {
-                print_map(robots, width, height);
                 return std::to_string(step);
             }
         }
