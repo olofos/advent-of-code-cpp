@@ -121,8 +121,11 @@ std::string part2(std::istream& input)
     int width = 101, height = 103;
     unsigned step;
 
+    std::vector<std::vector<uint8_t>> entries(height, std::vector<uint8_t>(width / 8 + 1, 0));
     for (step = 0; step < 10000; step++) {
-        std::vector<std::vector<int>> entries(height);
+        for (auto& row : entries) {
+            std::fill(row.begin(), row.end(), 0);
+        }
 
         for (auto& r : robots) {
             auto pt = r.position + r.velocity;
@@ -130,32 +133,14 @@ std::string part2(std::istream& input)
                 (pt.x % width + width) % width,
                 (pt.y % height + height) % height
             };
-            entries[r.position.y].push_back(r.position.x);
+            entries[r.position.y][r.position.x / 8] |= 1 << (r.position.x % 8);
         }
 
-        int max_count = 0;
-        for (auto& line : entries) {
-            if (line.size() < 2) {
-                continue;
+        for (auto& row : entries) {
+            if (std::find(row.begin(), row.end(), 0xFF) != row.end()) {
+                print_map(robots, width, height);
+                return std::to_string(step);
             }
-            std::sort(line.begin(), line.end());
-            auto end = std::unique(line.begin(), line.end());
-            int max_line_count = 0;
-            int line_count = 0;
-            for (auto it = line.begin(); it != end - 1; ++it) {
-                if (*(it + 1) - *it == 1) {
-                    line_count++;
-                    max_line_count = std::max(line_count, max_line_count);
-                } else {
-                    line_count = 0;
-                }
-            }
-            max_count = std::max(max_line_count, max_count);
-        }
-
-        if (max_count > 8) {
-            print_map(robots, width, height);
-            return std::to_string(step);
         }
     }
     return "no tree found";
