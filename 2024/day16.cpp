@@ -114,7 +114,6 @@ Grid parse_grid(std::istream& input)
 std::string part1(std::istream& input)
 {
     auto grid = parse_grid(input);
-    std::cout << grid.width << " " << grid.height << std::endl;
     auto start_pos = grid.find('S');
     auto end = grid.find('E');
 
