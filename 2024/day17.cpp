@@ -1,8 +1,6 @@
 #include <algorithm>
 #include <iostream>
 #include <istream>
-#include <set>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -29,11 +27,11 @@ struct CPU {
     uint64_t a, b, c, init_a, init_b, init_c;
     uint8_t pc = 0;
     std::vector<uint8_t> program;
-    std::string program_string;
-    std::string output;
+    std::vector<uint8_t> output;
 
     void run();
     uint64_t get_combo(uint8_t) const;
+    std::string output_string() const;
     void reset()
     {
         a = init_a;
@@ -92,10 +90,8 @@ void CPU::run()
             break;
 
         case 5: // out
-            if (!output.empty()) {
-                output += ",";
-            }
-            output += std::to_string(get_combo(operand) % 8);
+
+            output.push_back(get_combo(operand) % 8);
             break;
 
         case 6: // bdv
@@ -107,6 +103,21 @@ void CPU::run()
             break;
         }
     }
+}
+
+std::string CPU::output_string() const
+{
+    std::string s;
+    bool first = true;
+    for (auto c : output) {
+        if (first) {
+            first = false;
+        } else {
+            s.push_back(',');
+        }
+        s.push_back('0' + c);
+    }
+    return s;
 }
 
 std::ostream& operator<<(std::ostream& os, const CPU& cpu)
@@ -137,10 +148,11 @@ CPU parse(std::istream& input)
     input >> cpu.init_c;
 
     expect(input, "Program:");
-    input >> cpu.program_string;
+    std::string program_string;
+    input >> program_string;
 
-    for (std::size_t i = 0; i < cpu.program_string.size(); i += 2) {
-        cpu.program.push_back(cpu.program_string[i] - '0');
+    for (std::size_t i = 0; i < program_string.size(); i += 2) {
+        cpu.program.push_back(program_string[i] - '0');
     }
 
     cpu.reset();
@@ -151,12 +163,54 @@ std::string part1(std::istream& input)
 {
     auto cpu = parse(input);
     cpu.run();
-    return cpu.output;
+    return cpu.output_string();
+}
+
+std::optional<uint64_t> find_quine(CPU& cpu, uint64_t goal, uint64_t a)
+{
+    for (uint64_t new_a = a << 3; new_a < (a << 3) + 8; new_a++) {
+        cpu.reset();
+        cpu.a = new_a;
+        cpu.run();
+
+        uint64_t output = 0;
+        uint64_t mask = 0;
+
+        for (auto c : cpu.output) {
+            output = (output << 3) + c;
+            mask = (mask << 3) | 0b111;
+        }
+
+        if (output == goal) {
+            return new_a;
+        }
+
+        if (output == (goal & mask)) {
+            auto result = find_quine(cpu, goal, new_a);
+            if (result.has_value()) {
+                return result;
+            }
+        }
+    }
+    return std::nullopt;
 }
 
 std::string part2(std::istream& input)
 {
-    throw std::runtime_error("not implemented");
+    auto cpu = parse(input);
+
+    uint64_t goal = 0;
+    for (auto c : cpu.program) {
+        goal = (goal << 3) + c;
+    }
+
+    auto result = find_quine(cpu, goal, 0);
+
+    if (result.has_value()) {
+        return std::to_string(result.value());
+    } else {
+        throw std::runtime_error("no quine found");
+    }
 }
 }
 
