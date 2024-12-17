@@ -73,7 +73,7 @@ std::string run_part(PartFunc func, std::istream& input)
         auto result = func(input);
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration<double, std::milli>(end - start);
-        output << std::format("{:>15} {:7.2f}ms ", result, duration.count());
+        output << std::format("{:>17} {:7.2f}ms ", result, duration.count());
     } catch (const std::exception& e) {
         output << "Error: " << e.what();
     }
