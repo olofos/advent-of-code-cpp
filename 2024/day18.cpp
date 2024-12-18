@@ -28,6 +28,44 @@ std::vector<Point> parse(std::istream& input)
     return points;
 }
 
+std::optional<std::set<Point>> find_path(std::set<Point>& points, int width, int height)
+{
+    std::deque<Point> queue = { { 0, 0 } };
+    std::map<Point, Point> visited;
+
+    visited[Point { 0, 0 }] = Point { 0, 0 };
+
+    while (!queue.empty()) {
+        auto point = queue.front();
+        queue.pop_front();
+
+        if (point == Point { width - 1, height - 1 }) {
+            std::set<Point> path = { { point } };
+            while (point != Point { 0, 0 }) {
+                auto it = visited.find(point);
+                if (it == visited.end()) {
+                    break;
+                }
+                path.insert(it->second);
+                point = it->second;
+            }
+            return path;
+        }
+
+        std::array<Point, 4> offsets = { { { 1, 0 }, { 0, 1 }, { 0, -1 }, { -1, 0 } } };
+        for (auto& offset : offsets) {
+            auto p = point + offset;
+            if (p.x < 0 || p.y < 0 || p.x >= width || p.y >= height || points.find(p) != points.end() || visited.contains(p)) {
+                continue;
+            }
+            visited[p] = point;
+            queue.push_back(p);
+        }
+    }
+
+    return std::nullopt;
+}
+
 std::string part1(std::istream& input)
 {
     auto point_vec = parse(input);
@@ -45,74 +83,12 @@ std::string part1(std::istream& input)
     point_vec.resize(num_points);
 
     std::set<Point> points(point_vec.begin(), point_vec.end());
-
-    std::deque<std::pair<Point, unsigned>> queue = { { { { 0, 0 }, 0 } } };
-    std::set<Point> visited;
-
-    while (!queue.empty()) {
-        auto [point, dist] = queue.front();
-        queue.pop_front();
-
-        if (visited.contains(point)) {
-            continue;
-        }
-
-        if (point == Point { width - 1, height - 1 }) {
-            return std::to_string(dist);
-        }
-
-        visited.insert(point);
-
-        std::array<Point, 4> offsets = { { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } } };
-        for (auto& offset : offsets) {
-            auto p = point + offset;
-            if (p.x < 0 || p.y < 0 || p.x >= width || p.y >= height || points.find(p) != points.end() || visited.contains(p)) {
-                continue;
-            }
-            queue.emplace_back(p, dist + 1);
-        }
+    auto path = find_path(points, width, height);
+    if (path.has_value()) {
+        return std::to_string(path.value().size() - 1);
     }
 
     throw std::runtime_error("no path found");
-}
-
-std::optional<std::set<Point>> find_path(std::set<Point>& points, int width, int height)
-{
-    std::vector<Point> stack = { { 0, 0 } };
-    std::map<Point, Point> visited;
-
-    visited[Point { 0, 0 }] = Point { 0, 0 };
-
-    while (!stack.empty()) {
-        auto point = stack.back();
-
-        if (point == Point { width - 1, height - 1 }) {
-            std::set<Point> path = { { point } };
-            while (point != Point { 0, 0 }) {
-                auto it = visited.find(point);
-                if (it == visited.end()) {
-                    break;
-                }
-                path.insert(it->second);
-                point = it->second;
-            }
-            return path;
-        }
-
-        stack.pop_back();
-
-        std::array<Point, 4> offsets = { { { 1, 0 }, { 0, 1 }, { 0, -1 }, { -1, 0 } } };
-        for (auto& offset : offsets) {
-            auto p = point + offset;
-            if (p.x < 0 || p.y < 0 || p.x >= width || p.y >= height || points.find(p) != points.end() || visited.contains(p)) {
-                continue;
-            }
-            visited[p] = point;
-            stack.push_back(p);
-        }
-    }
-
-    return std::nullopt;
 }
 
 std::string part2(std::istream& input)
@@ -130,17 +106,17 @@ std::string part2(std::istream& input)
         num_points = 12;
     }
 
-    std::set<Point> points;
+    std::set<Point> points(point_vec.begin(), point_vec.begin() + num_points);
     std::set<Point> path = find_path(points, width, height).value();
 
-    for (auto& p : point_vec) {
-        points.insert(p);
-        if (path.contains(p)) {
+    for (auto it = point_vec.begin() + num_points; it != point_vec.end(); it++) {
+        points.insert(*it);
+        if (path.contains(*it)) {
             auto result = find_path(points, width, height);
             if (result.has_value()) {
                 path = result.value();
             } else {
-                return std::format("{},{}", p.x, p.y);
+                return std::format("{},{}", it->x, it->y);
             }
         }
     }
