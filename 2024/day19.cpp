@@ -76,22 +76,12 @@ std::size_t count_matches(const Trie& trie, const std::string_view& str)
                 new_nodes.push_back({ &it->second, node_count });
             }
         }
-        std::size_t root_count = 0;
-        for (auto [node, node_count] : new_nodes) {
-            if (node->is_leaf) {
-                root_count += node_count;
-            }
-        }
+        auto root_count = std::accumulate(new_nodes.begin(), new_nodes.end(), std::size_t {}, [](auto a, auto b) { return b.first->is_leaf ? a + b.second : a; });
         new_nodes.push_back({ &trie, root_count });
         nodes = new_nodes;
     }
 
-    std::size_t count = 0;
-    for (auto [node, node_count] : nodes) {
-        if (node->is_leaf) {
-            count += node_count;
-        }
-    }
+    auto count = std::accumulate(nodes.begin(), nodes.end(), std::size_t {}, [](auto a, auto b) { return b.first->is_leaf ? a + b.second : a; });
 
     return count;
 }
