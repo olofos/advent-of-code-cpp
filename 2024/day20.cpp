@@ -2,6 +2,7 @@
 #include <array>
 #include <iostream>
 #include <istream>
+#include <limits>
 #include <set>
 #include <sstream>
 #include <string>
