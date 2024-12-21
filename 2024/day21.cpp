@@ -22,123 +22,29 @@ std::vector<std::string> parse(std::istream& input)
     return lines;
 }
 
-class SmallestStringSet {
-    std::vector<std::string> strings;
-
-public:
-    SmallestStringSet() { }
-    SmallestStringSet(const std::string& str)
-        : strings({ str })
-    {
-    }
-    void add(const std::string& str)
-    {
-        if (strings.empty() || str.size() < strings.back().size()) {
-            strings = { str };
-        } else if (str.size() == strings.back().size()) {
-            strings.push_back(str);
-        }
-    }
-
-    auto begin() const { return strings.begin(); }
-    auto end() const { return strings.end(); }
-    auto size() const { return strings.back().size(); }
-};
-
-void generate_sequence(const std::map<char, Point>& positions, Point forbidden, std::string_view line, SmallestStringSet& smallest_set)
+std::string generate_sequence(const std::map<char, Point>& positions, Point forbidden, std::string_view line)
 {
-    std::vector<std::string> curr_results = { "" };
     Point curr = positions.find('A')->second;
+    std::string result;
 
     for (char c : line) {
         std::vector<std::string> next_results;
         auto goal = positions.find(c)->second;
-
-        if (curr.x == goal.x) {
-            std::string ds;
-            if (curr.y > goal.y) {
-                ds = std::string(curr.y - goal.y, '^');
-            } else {
-                ds = std::string(goal.y - curr.y, 'v');
-            }
-
-            for (auto& s : curr_results) {
-                next_results.push_back(s + ds);
-            }
-        } else if (curr.y == goal.y) {
-            std::string ds;
-            if (curr.x > goal.x) {
-                ds = std::string(curr.x - goal.x, '<');
-            } else {
-                ds = std::string(goal.x - curr.x, '>');
-            }
-
-            for (auto& s : curr_results) {
-                next_results.push_back(s + ds);
-            }
+        if (Point { goal.x, curr.y } != forbidden) {
+            result += std::string(std::abs(curr.x - goal.x), curr.x > goal.x ? '<' : '>');
+            result += std::string(std::abs(curr.y - goal.y), curr.y > goal.y ? '^' : 'v');
         } else {
-            Point corner1 = { curr.x, goal.y };
-            Point corner2 = { goal.x, curr.y };
-
-            if (forbidden != corner2) {
-                std::string ds;
-                if (curr.x > goal.x) {
-                    ds += std::string(curr.x - goal.x, '<');
-                } else {
-                    ds += std::string(goal.x - curr.x, '>');
-                }
-                if (curr.y > goal.y) {
-                    ds += std::string(curr.y - goal.y, '^');
-                } else {
-                    ds += std::string(goal.y - curr.y, 'v');
-                }
-                for (auto& s : curr_results) {
-                    next_results.push_back(s + ds);
-                }
-            }
-
-            if (forbidden != corner1) {
-                std::string ds;
-                if (curr.y > goal.y) {
-                    ds += std::string(curr.y - goal.y, '^');
-                } else {
-                    ds += std::string(goal.y - curr.y, 'v');
-                }
-                if (curr.x > goal.x) {
-                    ds += std::string(curr.x - goal.x, '<');
-                } else {
-                    ds += std::string(goal.x - curr.x, '>');
-                }
-                for (auto& s : curr_results) {
-                    next_results.push_back(s + ds);
-                }
-            }
+            result += std::string(std::abs(curr.y - goal.y), curr.y > goal.y ? '^' : 'v');
+            result += std::string(std::abs(curr.x - goal.x), curr.x > goal.x ? '<' : '>');
         }
-        for (auto& s : next_results) {
-            s += 'A';
-        }
+        result += 'A';
         curr = goal;
-        curr_results = next_results;
-    }
-
-    for (auto s : curr_results) {
-        smallest_set.add(s);
-    }
-}
-
-SmallestStringSet generate_sequence(const std::map<char, Point>& positions, Point forbidden, const SmallestStringSet& lines)
-{
-    SmallestStringSet result;
-    for (auto& line : lines) {
-        generate_sequence(positions, forbidden, line, result);
     }
     return result;
 }
 
-std::string part1(std::istream& input)
+size_t get_complexity_sum(const std::vector<std::string>& lines, int steps)
 {
-    auto lines = parse(input);
-
     std::map<char, Point> numpad_positions = {
         { '7', { 0, 0 } },
         { '8', { 1, 0 } },
@@ -163,13 +69,21 @@ std::string part1(std::istream& input)
 
     size_t sum = 0;
     for (auto& line : lines) {
-        auto seq1 = generate_sequence(numpad_positions, Point { 0, 3 }, line);
-        auto seq2 = generate_sequence(dirpad_positions, Point { 0, 0 }, seq1);
-        auto seq3 = generate_sequence(dirpad_positions, Point { 0, 0 }, seq2);
+        auto seq = generate_sequence(numpad_positions, Point { 0, 3 }, line);
+        for (int n = 0; n < steps; n++) {
+            seq = generate_sequence(dirpad_positions, Point { 0, 0 }, seq);
+        }
         size_t complexity = std::stoi(line, nullptr, 10);
 
-        sum += complexity * seq3.size();
+        sum += complexity * seq.size();
     }
+    return sum;
+}
+
+std::string part1(std::istream& input)
+{
+    auto lines = parse(input);
+    auto sum = get_complexity_sum(lines, 2);
     return std::to_string(sum);
 }
 
